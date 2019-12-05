@@ -4,11 +4,19 @@ const Controller = require('../core/base_controller');
 class TwoLevelMenuController extends Controller {
   async saveTwoLevelMenu(){
     //设备名字和数据
-    const {menuId,name}=this.ctx.request.body;
+    const {menuId,name,equpmentNumOfArea,userId}=this.ctx.request.body;
     const isMenu = await this.ctx.service.twoLevelMenu.find({name});
     if(!isMenu){
       try {
-        await this.ctx.service.twoLevelMenu.save(menuId,name);
+        if(userId){
+          let user=await this.ctx.service.user.find({id:userId}) 
+          if(user.controll==0){
+            return this.fail({msg:"当前用户是只看模式"})    
+          }
+        }else{
+          return this.fail({msg:"请登录"})
+        }
+        await this.ctx.service.twoLevelMenu.save(menuId,name,equpmentNumOfArea);
         this.success()
       }
       catch(error) {
@@ -52,22 +60,51 @@ class TwoLevelMenuController extends Controller {
       this.fail({msg:error.message})
     }
   }
+  async getAllTwoLevelMenuAssociate(){
+    const {sign,twoLevelMenuId}=this.ctx.request.query;
+    try {
+      if(sign==1){
+        let result=await this.ctx.service.twoLevelMenu.find({id:twoLevelMenuId})
+        let associatedDevice=await this.ctx.service.associatedDevice.getAllTwoLevelMenuAssociate(twoLevelMenuId);
+        let equipments=[];
+        for(let item of associatedDevice){
+          let equipment=await this.ctx.service.equipment.find({id:item.equipmentId});
+          equipments.push(equipment);
+        }
+        result.equipments=equipments
+        this.success(result);  
+      }
+    } catch (error) {
+      this.fail({msg:error.message})
+    }
+  }
   async associatedDevice(){
     const {sign,twoLevelMenuId,equipments}=this.ctx.request.body;
     try {
+      if(sign){
+      
       for(let i=0;i<equipments.length;i++){
         await this.ctx.service.associatedDevice.saveTwoLevelMenuAssociate(twoLevelMenuId,equipments[i])
-      }
-      this.success();  
+      } 
+      this.success();
+      }  
     } catch (error) {
       this.fail({msg:error.message})
     }
   }
   async updateTwoLevelMenu(){
     //设备名字和数据
-    const {id,name}=this.ctx.request.body;
+    const {id,name,equpmentNumOfArea,userId}=this.ctx.request.body;
       try {
-        await this.ctx.service.twoLevelMenu.update(id,name);
+        if(userId){
+          let user=await this.ctx.service.user.find({id:userId}) 
+          if(user.controll==0){
+            return this.fail({msg:"当前用户是只看模式"})    
+          }
+        }else{
+          return this.fail({msg:"请登录"})
+        }
+        await this.ctx.service.twoLevelMenu.update(id,name,equpmentNumOfArea);
         this.success()
       }
       catch(error) {

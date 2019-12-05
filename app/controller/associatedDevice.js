@@ -20,10 +20,22 @@ class AssociatedDeviceController extends Controller {
   }
   //给工程分配设备
   async associatedDevice(){
-    const {sign,twoLevelMenuId,equipments}=this.ctx.request.body;
+    const {sign,menuId,equipments,userId}=this.ctx.request.body;
     try {
+      if(userId){
+        let user=await this.ctx.service.user.find({id:userId}) 
+        if(user.controll==0){
+          return this.fail({msg:"当前用户是只看模式"})    
+        }
+      }else{
+        return this.fail({msg:"请登录"})
+      }
+      let associatedDevice=await this.ctx.service.associatedDevice.getAllMenuAssociate(menuId);
+      for(let i=0;i<associatedDevice.length;i++){
+        await this.ctx.service.associatedDevice.deleteAssociatedDevice(menuId,associatedDevice[i].equipmentDataId);
+      }
       for(let i=0;i<equipments.length;i++){
-        await this.ctx.service.associatedDevice.saveTwoLevelMenuAssociate(twoLevelMenuId,equipments[i])
+        await this.ctx.service.associatedDevice.saveMenuAssociate(menuId,equipments[i])
       }
       this.success();  
     } catch (error) {
@@ -33,9 +45,16 @@ class AssociatedDeviceController extends Controller {
   //删除工程下的设备
   async deleteAssociatedDevice(){
     const {sign}=this.ctx.request.query;
-    const {twoLevelMenuId,equipmentId}=this.ctx.request.body;
-    console.log(twoLevelMenuId,equipmentId)
+    const {twoLevelMenuId,equipmentId,userId}=this.ctx.request.body;
     try {
+      if(userId){
+        let user=await this.ctx.service.user.find({id:userId}) 
+        if(user.controll==0){
+          return this.fail({msg:"当前用户是只看模式"})    
+        }
+      }else{
+        return this.fail({msg:"请登录"})
+      }
       if(sign&&typeof twoLevelMenuId==='number'&&typeof equipmentId==='number'){
         await this.ctx.service.associatedDevice.deleteAssociatedDevice(twoLevelMenuId,equipmentId)
         this.success();
@@ -48,8 +67,8 @@ class AssociatedDeviceController extends Controller {
   async deleteUserAssociatedDevice(){
     const {sign}=this.ctx.request.query;
     const {userId,equipmentId}=this.ctx.request.body;
-    console.log(userId,equipmentId,111)
     try {
+      
       if(sign&&typeof userId==='number'&&typeof equipmentId==='number'){
         await this.ctx.service.associatedDevice.deleteUserAssociatedDevice(userId,equipmentId)
         this.success();
@@ -59,11 +78,11 @@ class AssociatedDeviceController extends Controller {
     }
   }
   //得到工程下面的设备
-  async getAllEquipmentByTwoLevelMenuId(){
-    const {sign,twoLevelMenuId}=this.ctx.request.query;
+  async getAllEquipmentByMenuId(){
+    const {sign,menuId}=this.ctx.request.query;
     try {
       if(sign){
-        let result=await this.ctx.service.associatedDevice.getAllEquipmentByTwoLevelMenuId(twoLevelMenuId);
+        let result=await this.ctx.service.associatedDevice.getAllEquipmentByMenuId(menuId);
         this.success(result);
       }
     } catch (error) {

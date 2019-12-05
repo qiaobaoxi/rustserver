@@ -1,18 +1,18 @@
 const Service = require('egg').Service;
 
 class EquipmentService extends Service {
-  async save(user,password) {
-    const result = await this.app.mysql.insert('equipment', { user,password });
+  async save(name,companyId) {
+    const result = await this.app.mysql.insert('equipment', { name,companyId });
     return result;
   }
   async find(params) {
     const result = await this.app.mysql.get('equipment', { ...params });
     return result;
   }
-  async getAll(userId){
+  async getAll(companyId){
     let result
-    if(userId){
-      result = await this.app.mysql.query(`SELECT * FROM relevance LEFT JOIN equipment ON relevance.equipmentId=equipment.id WHERE userId=${userId}`);
+    if(companyId){
+      result = await this.app.mysql.query(`SELECT * FROM equipment  WHERE companyId=${companyId}`);
     }else{
       result = await this.app.mysql.query(`SELECT * FROM equipment`);
     }

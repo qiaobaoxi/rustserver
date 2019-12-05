@@ -1,24 +1,24 @@
 const Service = require('egg').Service;
 
 class AssociatedDeviceService extends Service {
-  async getAllTwoLevelMenuAssociate(twoLevelMenuId){
-    const result = await this.app.mysql.select('associatedDevice', {where:{twoLevelMenuId}});
+  async getAllMenuAssociate(menuId){
+    const result = await this.app.mysql.select('associateddevice', {where:{menuId}});
     return result;
   }
-  async saveTwoLevelMenuAssociate(twoLevelMenuId,equipmentId){
-    const result = await this.app.mysql.insert('associatedDevice', {twoLevelMenuId,equipmentId});
+  async saveMenuAssociate(menuId,equipmentDataId){
+    const result = await this.app.mysql.insert('associateddevice', {menuId,equipmentDataId});
     return result;
   }
-  async deleteAssociatedDevice(twoLevelMenuId,equipmentId){
-    const result = await this.app.mysql.delete('associatedDevice', {twoLevelMenuId,equipmentId});
+  async deleteAssociatedDevice(menuId,equipmentDataId){
+    const result = await this.app.mysql.delete('associateddevice', {menuId,equipmentDataId});
     return result;
   }
-  async deleteUserAssociatedDevice(userId,equipmentId){
-    const result = await this.app.mysql.delete('relevance', {userId,equipmentId});
+  async deleteUserAssociatedDevice(userId,equipmentDataId){
+    const result = await this.app.mysql.delete('relevance', {userId,equipmentDataId});
     return result;
   }
-  async getAllEquipmentByTwoLevelMenuId(twoLevelMenuId){
-    const result = await this.app.mysql.query(`SELECT * FROM associateddevice LEFT JOIN equipment ON associateddevice.equipmentId=equipment.id WHERE twoLevelMenuId=${twoLevelMenuId}`)
+  async getAllEquipmentByMenuId(menuId){
+    const result = await this.app.mysql.query(`SELECT * FROM associateddevice WHERE menuId=${menuId}`)
     return result;
   }
 }

@@ -15,12 +15,15 @@ class MenuService extends Service {
   }
   async getAll(nowPage,userId){
     let result
+    let count
     if(nowPage){
-      result = await this.app.mysql.select('menu',{limit: 10,offset: 10*(nowPage-1),where:{userId}});  
+      result = await this.app.mysql.select('menu',{limit: 10,offset: 10*(nowPage-1),where:{userId}});
+      count = await this.app.mysql.query(`select count(*) from menu where userId=${userId}`);  
     }else{
       result = await this.app.mysql.select('menu');
+      count = await this.app.mysql.query('select count(*) from menu');
     }
-    const count = await this.app.mysql.query('select count(*) from menu');
+    
     return {
       result,
       count:count[0]['count(*)']

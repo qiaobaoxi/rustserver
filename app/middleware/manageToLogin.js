@@ -1,9 +1,8 @@
 module.exports = () => {
     return async function manageToLogin(ctx, next) {
-      let {name,time,wxSign}=ctx.query;
-      let manageTologin=ctx.app.config.manageTologin
-      name=wxSign?manageTologin[wxSign+name]:manageTologin[name]
-      if(name==time){
+      let {name,wxSign,userId}=ctx.query;
+      let code=wxSign?await ctx.app.userOverTime(ctx,wxSign+name+userId):await ctx.app.userOverTime(ctx,name+userId)
+      if(code===1){
         await next(); 
       }else{
         return ctx.body = {
