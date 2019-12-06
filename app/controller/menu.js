@@ -4,8 +4,8 @@ const Controller = require('../core/base_controller');
 class MenuController extends Controller {
   async saveMenu(){
     //设备名字和数据
-    const {name,userId}=this.ctx.request.body;
-    const isMenu = await this.ctx.service.menu.find({userId,name});
+    const {name,userId,companyId}=this.ctx.request.body;
+    const isMenu = await this.ctx.service.menu.find({companyId,name});
     if(!isMenu){
       try {
         if(userId){
@@ -16,7 +16,7 @@ class MenuController extends Controller {
         }else{
           return this.fail({msg:"请登录"})
         }
-        await this.ctx.service.menu.save({name,userId});
+        await this.ctx.service.menu.save({name,companyId});
         this.success()
       }
       catch(error) {
@@ -47,10 +47,10 @@ class MenuController extends Controller {
   }
   async getAllMenuByPage(){
     //sign表示是不是登录完之后查询的
-    const {sign,nowPage=0,userId}=this.ctx.request.query;
+    const {sign,nowPage=0,companyId}=this.ctx.request.query;
     try {
       if(sign==1){
-        const result = await this.ctx.service.menu.getAll(nowPage,userId);
+        const result = await this.ctx.service.menu.getAll(nowPage,companyId);
         result.result=await Promise.all(result.result.map(async(item)=>{
           item.twoLevelMenu = await this.ctx.service.twoLevelMenu.getAll(item.id);
           return item;
@@ -61,12 +61,12 @@ class MenuController extends Controller {
       this.fail({msg:error.message})
     }
   }
-  async getAllMenuByUserId(){
+  async getAllMenuByCompanyId(){
     //sign表示是不是登录完之后查询的
-    const {sign,userId}=this.ctx.request.query;
+    const {sign,companyId}=this.ctx.request.query;
     try {
-      if(sign==1&&userId){
-        const result = await this.ctx.service.menu.getAllByUserId(userId);
+      if(sign==1&&companyId){
+        const result = await this.ctx.service.menu.getAllByCompanyId(companyId);
         this.success(result);  
       }
     } catch (error) {
@@ -85,14 +85,13 @@ class MenuController extends Controller {
       this.fail({msg:error.message})
     }
   }
-  async isMatchMenuByUserId(){
+  async isMatchMenuByCompanyId(){
     //sign表示是不是登录完之后查询的
-    const {sign,userId}=this.ctx.request.query;
+    const {sign,companyId}=this.ctx.request.query;
     try {
       if(sign==1){
-        const result = await this.ctx.service.menu.getAllByUserId(userId);
-        const user = await this.ctx.service.user.find({id:userId});
-        let equipments = await this.ctx.service.equipment.getAll(user.companyId);
+        const result = await this.ctx.service.menu.getAllByCompanyId(companyId);
+        let equipments = await this.ctx.service.equipment.getAll(companyId);
         const equipmentArr=[];
         for(let item of equipments.result){
            let equipmentdata=await this.ctx.service.equipmentData.getAllByEquipmentnum({equipmentnum:item.name});

@@ -23,6 +23,7 @@ class UsersController extends Controller {
         await this.app.redis.set(name, time);
         delete user.password;
         user.companyName=company.name;
+        user.companyId=company.id;
         this.success(user)
       }else{
         this.fail({msg:"账户或密码有误"})

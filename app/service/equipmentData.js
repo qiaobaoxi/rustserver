@@ -2,8 +2,11 @@ const Service = require('egg').Service;
 
 class EquipmentDataService extends Service {
   async getAllByEquipmentnum(params) {
-    console.log(params)
     const result = await this.app.mysql.select('equipmentdata', { where:{...params}});
+    return result;
+  }
+  async deleteFile(name){
+    const result = await this.app.mysql.delete('equipmentdata', {name});
     return result;
   }
   async getAll() {

@@ -9,16 +9,16 @@ class MenuService extends Service {
     const result = await this.app.mysql.get('menu', { ...params });
     return result;
   }
-  async getAllByUserId(userId){
-    let result = await this.app.mysql.select('menu',{where:{userId}});
+  async getAllByCompanyId(companyId){
+    let result = await this.app.mysql.select('menu',{where:{companyId}});
     return result 
   }
-  async getAll(nowPage,userId){
+  async getAll(nowPage,companyId){
     let result
     let count
     if(nowPage){
-      result = await this.app.mysql.select('menu',{limit: 10,offset: 10*(nowPage-1),where:{userId}});
-      count = await this.app.mysql.query(`select count(*) from menu where userId=${userId}`);  
+      result = await this.app.mysql.select('menu',{limit: 10,offset: 10*(nowPage-1),where:{companyId}});
+      count = await this.app.mysql.query(`select count(*) from menu where companyId=${companyId}`);  
     }else{
       result = await this.app.mysql.select('menu');
       count = await this.app.mysql.query('select count(*) from menu');

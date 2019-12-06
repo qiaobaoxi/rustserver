@@ -11,7 +11,7 @@ class UserService extends Service {
     return result;
   }
   async getAll(nowPage){
-    const result = await this.app.mysql.select('users',{columns: ['id', 'user'],limit: 10,offset: 10*(nowPage-1)});
+    const result = await this.app.mysql.select('users',{columns: ['id', 'user','controll'],limit: 10,offset: 10*(nowPage-1)});
     const count = await this.app.mysql.query('select count(*) from users');
     return {
       result,
@@ -19,7 +19,7 @@ class UserService extends Service {
     };  
   }
   async getAllByCompanyId(companyId){
-    const result = await this.app.mysql.select('users',{columns: ['id', 'user'],where:{companyId}});
+    const result = await this.app.mysql.select('users',{columns: ['id', 'user','controll'],where:{companyId}});
     return result;
   }
   async update(id,user,password,onlySee){

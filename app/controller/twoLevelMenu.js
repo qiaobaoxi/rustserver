@@ -5,7 +5,7 @@ class TwoLevelMenuController extends Controller {
   async saveTwoLevelMenu(){
     //设备名字和数据
     const {menuId,name,equpmentNumOfArea,userId}=this.ctx.request.body;
-    const isMenu = await this.ctx.service.twoLevelMenu.find({name});
+    const isMenu = await this.ctx.service.twoLevelMenu.find({menuId,name});
     if(!isMenu){
       try {
         if(userId){

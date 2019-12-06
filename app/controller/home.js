@@ -49,6 +49,7 @@ class HomeController extends Controller {
       //sign表示是不是登录完之后查询的
       if(sign==1){
         const result = await this.ctx.service.user.find({id});
+        delete result.password;
         this.success(result);  
       }
     } catch (error) {
@@ -100,6 +101,15 @@ class HomeController extends Controller {
       this.fail({msg:error.message})
     } 
   }
+  async deleteFile(){
+    const {equipmentName}=this.ctx.request.body;
+    try {
+      await this.ctx.service.equipmentData.deleteFile(equipmentName);
+      this.success();  
+    } catch (error) {
+      this.fail({msg:error.message})
+    } 
+  }
   async downToExcel(){
       const {base64,equipmentName,menuId=0,engineerNum=''}=this.ctx.request.body;
     try {
@@ -144,7 +154,10 @@ class HomeController extends Controller {
       let length=mergeData[6]*mergeData[7];
       for(let i=0;i<length;i++){
         let value=(mergeData[i*2+16]+mergeData[i*2+17]*256)/100
-        list.push({value,value1:await this.getRou(value*100,p,csfinish,x)});
+        if(value*100==65535){
+          value='-';
+        }
+        list.push({value,value1:value=='-'?'-':await this.getRou(value*100,p,csfinish,x)});
       }
       // console.log(mergeData);
       // for(let item of arrVal){
@@ -171,7 +184,7 @@ class HomeController extends Controller {
        //用数据源(对象)data渲染Excel模板
        const exlBuf2 = await ejsexcel.renderExcel(exlBuf, data);
        await writeFileAsync('./app/public/excel/'+name+".xlsx", exlBuf2);
-       this.success({http:'http://127.0.0.1:7001/public/excel/'+name+".xlsx"}); 
+       this.success({http:'http://47.111.115.157:7001/public/excel/'+name+".xlsx"}); 
     } catch (error) {
       this.fail({msg:error.message})
     } 

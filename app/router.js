@@ -9,6 +9,7 @@ module.exports = app => {
   router.post('/saveUser', app.middlewares.manageToLogin(),controller.home.saveUser);
   router.post('/updateUser',app.middlewares.manageToLogin(), controller.home.updateUser);
   router.post('/deleteUser', app.middlewares.manageToLogin(),controller.home.deleteUser);
+  router.post('/deleteFile', app.middlewares.manageToLogin(),controller.home.deleteFile);
   router.get('/getAllUser', app.middlewares.manageToLogin(),controller.home.getAllUser);
   router.get('/getUser', app.middlewares.manageToLogin(),controller.home.getUser);
   router.post('/downToExcel', controller.home.downToExcel);
@@ -27,8 +28,8 @@ module.exports = app => {
   router.post('/updateMenu', app.middlewares.manageToLogin(),controller.menu.updateMenu);
   router.get('/getAllMenuByPage', app.middlewares.manageToLogin(),controller.menu.getAllMenuByPage);
   router.get('/getAllMenu', app.middlewares.manageToLogin(),controller.menu.getAllMenu);
-  router.get('/getAllMenuByUserId', app.middlewares.manageToLogin(),controller.menu.getAllMenuByUserId);
-  router.get('/isMatchMenuByUserId', app.middlewares.manageToLogin(),controller.menu.isMatchMenuByUserId);
+  router.get('/getAllMenuByCompanyId', app.middlewares.manageToLogin(),controller.menu.getAllMenuByCompanyId);
+  router.get('/isMatchMenuByCompanyId', app.middlewares.manageToLogin(),controller.menu.isMatchMenuByCompanyId);
 
   router.post('/saveTwoLevelMenu',app.middlewares.manageToLogin(), controller.twoLevelMenu.saveTwoLevelMenu);
   router.post('/updateTwoLevelMenu', app.middlewares.manageToLogin(),controller.twoLevelMenu.updateTwoLevelMenu);
